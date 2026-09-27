@@ -17,12 +17,14 @@ Sito demo one-page per una pizzeria/ristorante fittizio ("Pizzeria Da Marco", Ro
 ```
 app/
   layout.tsx        # Layout root, font, metadata
-  page.tsx           # Homepage — assembla tutte le sezioni in ordine
+  page.tsx           # Homepage — assembla le sezioni in ordine (menu escluso, vedi sotto)
+  menu/
+    page.tsx          # Pagina dedicata al menu digitale (route /menu)
   globals.css        # Stili globali Tailwind
 components/
-  navbar.tsx
+  navbar.tsx          # Include il link alla pagina /menu
   hero.tsx
-  menu-section.tsx        # Menu a tab (antipasti/pizze/dolci/bevande), dati hardcoded
+  menu-section.tsx        # Componente menu a tab (antipasti/pizze/dolci/bevande), dati hardcoded — usato in app/menu/page.tsx
   reservation-section.tsx  # Form prenotazione — SOLO client-side, nessun invio reale (vedi sotto)
   about-section.tsx
   gallery-section.tsx
@@ -46,7 +48,7 @@ pnpm install
 pnpm dev
 ```
 
-Apri [http://localhost:3000](http://localhost:3000).
+Apri [http://localhost:3000](http://localhost:3000). Il menu digitale è su [http://localhost:3000/menu](http://localhost:3000/menu).
 
 Script disponibili:
 - `pnpm dev` — sviluppo locale
@@ -64,13 +66,14 @@ Questo è un sito **dimostrativo**, non pronto per un cliente reale così com'è
 
 - **Form prenotazione** (`reservation-section.tsx`): valida i campi lato client ma **non invia nulla da nessuna parte** — nessuna email, nessun webhook, nessun backend. Va collegato a un servizio reale (es. Make.com → email, oppure una Route Handler Next.js + servizio email) prima di consegnarlo a un cliente pagante.
 - **Dati di contatto** (`contact-section.tsx`): indirizzo ("Via Roma 123"), telefono (+39 0425 123456) ed email (info@pizzeriadamarco.it) sono **fittizi**, così come le coordinate dell'iframe Google Maps (centrate genericamente su Rovigo, non un locale reale).
-- **Menu** (`menu-section.tsx`): piatti e prezzi sono di fantasia, hardcoded in un array — da sostituire con i dati reali del cliente.
+- **Menu** (`menu-section.tsx`, ora montato in `app/menu/page.tsx`): piatti e prezzi sono di fantasia, hardcoded in un array — da sostituire con i dati reali del cliente.
 - **Recensioni** (`reviews-section.tsx`): verificare se sono placeholder prima di riusarle con un cliente vero.
 - **Immagini**: in `public/` ci sono solo placeholder generici — vanno sostituite con foto reali del locale.
 
 ## Problemi noti / da sistemare
 
 - Doppio lockfile (`package-lock.json` e `pnpm-lock.yaml`): scegliere un solo package manager ed eliminare l'altro lockfile per evitare inconsistenze.
+- Split della pagina menu in `/menu`: verificare che `app/page.tsx` non importi più `menu-section` e che non restino file "morti" tipo `app/menu.tsx` (percorso sbagliato, non genera una route) o residui di generazione AI (fence markdown, tag `<think>`) in `layout.tsx`/`page.tsx`/`app/menu/page.tsx` prima di considerare lo split concluso.
 - Nessun file `.env.example` — se in futuro si aggiunge l'invio email/backend per le prenotazioni, documentare qui le variabili d'ambiente necessarie.
 
 ## Note per il riuso su un cliente reale
